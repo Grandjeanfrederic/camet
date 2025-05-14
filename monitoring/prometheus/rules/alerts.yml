@@ -1,0 +1,115 @@
+groups:
+  - name: camet_alerts
+    rules:
+      # Alertes sur l'application
+      - alert: CametAppDown
+        expr: up{job="camet-app"} == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "L'application CAMET est inaccessible"
+          description: "L'instance {{ $labels.instance }} est inaccessible depuis 5 minutes"
+
+      - alert: HighResponseTime
+        expr: rate(http_request_duration_seconds_sum{job="camet-app"}[5m]) / rate(http_request_duration_seconds_count{job="camet-app"}[5m]) > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Temps de réponse élevé"
+          description: "Le temps de réponse moyen est supérieur à 2 secondes sur {{ $labels.instance }}"
+
+      # Alertes sur la base de données
+      - alert: MySQLDown
+        expr: mysql_up{job="camet-app"} == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "MySQL est inaccessible"
+          description: "L'instance MySQL {{ $labels.instance }} est inaccessible"
+
+      - alert: HighMySQLConnections
+        expr: mysql_global_status_threads_connected > mysql_global_variables_max_connections * 0.8
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Nombre élevé de connexions MySQL"
+          description: "Plus de 80% des connexions MySQL sont utilisées"
+
+      # Alertes sur Redis
+      - alert: RedisDown
+        expr: redis_up{job="camet-app"} == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Redis est inaccessible"
+          description: "L'instance Redis {{ $labels.instance }} est inaccessible"
+
+      # Alertes système
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Utilisation CPU élevée"
+          description: "L'utilisation CPU est supérieure à 85% sur {{ $labels.instance }}"
+
+      - alert: HighMemoryUsage
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Utilisation mémoire élevée"
+          description: "L'utilisation de la mémoire est supérieure à 85% sur {{ $labels.instance }}"
+
+      - alert: LowDiskSpace
+        expr: (node_filesystem_size_bytes{mountpoint="/"} - node_filesystem_free_bytes{mountpoint="/"}) / node_filesystem_size_bytes{mountpoint="/"} * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Espace disque faible"
+          description: "L'utilisation du disque est supérieure à 85% sur {{ $labels.instance }}"
+
+      # Alertes métier CAMET
+      - alert: CommandeTraitementLent
+        expr: rate(commande_traitement_duration_seconds_sum{job="camet-app"}[5m]) / rate(commande_traitement_duration_seconds_count{job="camet-app"}[5m]) > 300
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Traitement des commandes lent"
+          description: "Le temps moyen de traitement des commandes dépasse 5 minutes"
+
+      - alert: EmplacementsIndisponibles
+        expr: sum(emplacement_disponible{job="camet-app"}) / sum(emplacement_total{job="camet-app"}) * 100 < 10
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Faible disponibilité des emplacements"
+          description: "Moins de 10% des emplacements de stockage sont disponibles"
+
+      - alert: VoyagePreparationRetard
+        expr: voyage_preparation_duration_seconds{job="camet-app", status="en_retard"} > 0
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Retard dans la préparation des voyages"
+          description: "Des voyages sont en retard de préparation depuis plus de 15 minutes"
+
+      - alert: TauxErreurOperationsCritiques
+        expr: sum(rate(operation_erreurs_total{job="camet-app", type="critique"}[5m])) / sum(rate(operation_total{job="camet-app", type="critique"}[5m])) * 100 > 5
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Taux d'erreur élevé sur opérations critiques"
+          description: "Plus de 5% des opérations critiques sont en erreur sur les 5 dernières minutes"
