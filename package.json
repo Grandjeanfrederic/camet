@@ -1,32 +1,20 @@
 {
-  "name": "camet-warehouse-management",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "name": "camet",
+  "version": "1.0.0",
+  "description": "Bienvenue dans le projet Application CAMET. Ce dépôt contient le code source et la documentation de l'application CAMET.",
+  "main": "index.js",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "dependencies": {
-    "@emotion/react": "^11.11.1",
-    "@emotion/styled": "^11.11.0",
-    "@mui/material": "^5.14.20",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^6.20.1"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Grandjeanfrederic/camet.git"
   },
-  "devDependencies": {
-    "@types/react": "^18.2.37",
-    "@types/react-dom": "^18.2.15",
-    "@typescript-eslint/eslint-plugin": "^6.10.0",
-    "@typescript-eslint/parser": "^6.10.0",
-    "@vitejs/plugin-react": "^4.2.0",
-    "eslint": "^8.53.0",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.4",
-    "typescript": "^5.2.2",
-    "vite": "^5.0.0"
-  }
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Grandjeanfrederic/camet/issues"
+  },
+  "homepage": "https://github.com/Grandjeanfrederic/camet#readme"
 }
